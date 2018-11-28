@@ -8,7 +8,10 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
+use think\Route;
+Route::rule('news/:id','api/news/read');
+Route::rule('city/:cityName','wx/city/getCityCode');
+Route::rule('weather/:cityCode','wx/weather/getWeatherByCityCode');
 return [
     '__pattern__' => [
         'name' => '\w+',

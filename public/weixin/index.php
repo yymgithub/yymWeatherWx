@@ -1,5 +1,5 @@
-<?php
-    //获得参数 signature nonce token timestamp echostr
+<?php 
+  //获得参数 signature nonce token timestamp echostr
     $nonce     = $_GET['nonce'];
     $token     = 'yym';
     $timestamp = $_GET['timestamp'];
@@ -67,15 +67,28 @@ else{
                 $fp=fopen("./data.txt",'a');
           		fwrite($fp,$str);
          		fwrite($fp,$str_key);
-                fclose($fp);
+                
                 if($str == '天气' && !empty($str_key)){
-                  $content = "【北京天气预报】\n2018年11月21日 10时发布\n\n实时天气\n晴 9℃~-3℃ 东北风2-3级\n\n温馨提示：天气寒冷，建议穿棉衣、羽绒服、厚毛衣。\n\n明天\n晴 10℃~-4℃ 东北风2-3级\n\n晴转多元 7℃~-3℃ 东北风2-3级" ;
+                  $cityCode = file_get_contents("http://154.8.195.15/city/".$str_key);
+                  $data = json_decode($cityCode,true);
+                  $cCode = $data["data"];
+                  $weather = file_get_contents("http://154.8.195.15/weather/".$cCode);
+                  $dataw = json_decode($weather,true);
+                  if(empty($dataw['data'])){
+                    $weather = file_get_contents("http://154.8.195.15/weather/101010100");
+                    $dataw = json_decode($weather,true);
+                  }
+                  $datas= $dataw['data'];
+                  fwrite($fp,$datas[0]["id"]);
+                  $content = "【".$str_key."天气预报】\n".$datas[0]["update_time"]."时发布\n\n实时天气\n".$datas[0]["today_weather"]." ".$datas[0]["today_temperature"]." ".$datas[0]["today_wind"]."\n\n温馨提示:".$datas[0]["today_suggestion"]."\n\n明天\n".$datas[0]["one_weather"]." ".$datas[0]["one_temperature"]." ".$datas[0]["one_wind"]."\n\n后天\n".$datas[0]["two_weather"]." ".$datas[0]["two_temperature"]." ".$datas[0]["two_wind"];
                 }
                 else{
                   $content = "请输入正确查询格式";
                 }
-                 
+                fclose($fp);
                 $info     = sprintf($template, $toUser, $fromUser, $time, $msgType, $content);
                 echo $info;
         }
-    }
+}
+
+ 

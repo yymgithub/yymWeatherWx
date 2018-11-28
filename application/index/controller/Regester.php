@@ -39,8 +39,6 @@ class Regester extends Controller
         else{
           $this->error('该用户名已存在，请重新输入新的用户名');
         }
-    
-    	//$this->redirect(url('index/index'));
       
   }
  
